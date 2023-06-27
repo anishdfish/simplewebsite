@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Image Upscaler</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function upscaleImage() {
+            var input = document.getElementById('upload');
+            var file = input.files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = new Image();
+                img.onload = function () {
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    canvas.width = 3840; // 4K width
+                    canvas.height = 2160; // 4K height
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    var upscaledImage = canvas.toDataURL('image/jpeg');
+                    document.getElementById('output').src = upscaledImage;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</head>
+<body>
+    <h1>Image Upscaler</h1>
+    <input type="file" id="upload">
+    <button onclick="upscaleImage()">Upscale</button>
+    <br><br>
+    <img id="output" style="max-width: 100%;" alt="Upscaled Image">
+</body>
+</html>
