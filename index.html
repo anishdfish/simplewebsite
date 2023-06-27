@@ -3,11 +3,10 @@
 <head>
     <link rel="stylesheet" href="style.css">
     <title>YouTube Video Player</title>
-    <script src="https://www.youtube.com/iframe_api?api_key=AIzaSyAtlrp557JRpGVqOx7Ljp-MO_Kg0WWKNbI"></script>
+    <script src="https://www.youtube.com/player_api"></script>
     <script>
         var player;
-
-        function onYouTubeIframeAPIReady() {
+        function onYouTubePlayerAPIReady() {
             player = new YT.Player('player', {
                 height: '360',
                 width: '640',
@@ -16,22 +15,39 @@
                     'autoplay': 0,
                     'controls': 1,
                     'showinfo': 0,
-                    'rel': 0
+                    'rel': 0,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': onPlayerReady
                 }
             });
         }
 
-        function playVideo() {
-            var videoId = document.getElementById('video-link').value;
-            player.loadVideoById(videoId);
+        function onPlayerReady(event) {
+            var playButton = document.getElementById('play-button');
+            var input = document.getElementById('video-input');
+            playButton.addEventListener('click', function () {
+                var videoUrl = input.value;
+                var videoId = extractVideoId(videoUrl);
+                player.loadVideoById(videoId);
+            });
+        }
+
+        function extractVideoId(url) {
+            var videoId = url.split('v=')[1];
+            var ampersandPosition = videoId.indexOf('&');
+            if (ampersandPosition !== -1) {
+                videoId = videoId.substring(0, ampersandPosition);
+            }
+            return videoId;
         }
     </script>
 </head>
 <body>
     <h1>YouTube Video Player</h1>
-    <input type="text" id="video-link" placeholder="Enter YouTube Video Link">
-    <button onclick="playVideo()">Play Video</button>
-    <br><br>
+    <input type="text" id="video-input" placeholder="Enter YouTube video URL">
+    <button id="play-button">Play</button>
     <div id="player"></div>
 </body>
 </html>
